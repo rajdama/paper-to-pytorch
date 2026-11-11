@@ -22,3 +22,9 @@ jobs:
 
       - name: Run tests
         run: pytest -v
+
+      - name: Train the Transformer on the reverse task (Step 11)
+        run: python -m step11_training.train_reverse
+
+      - name: Decode with the trained model (Step 12)
+        run: python -m step12_inference.demo

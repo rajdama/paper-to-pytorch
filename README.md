@@ -17,15 +17,15 @@ Step 10 the folders combine into the complete model, which is then trained and u
 | ✅ | [01](step01_embeddings) | Token embeddings | 3.4 |
 | ✅ | [02](step02_positional_encoding) | Positional encoding | 3.5 |
 | ✅ | [03](step03_attention) | Scaled dot-product attention | 3.2.1 |
-| ⬜ | [04](step04_masking) | Padding & causal masks | 3.2.3 |
-| ⬜ | [05](step05_multi_head_attention) | Multi-head attention | 3.2.2 |
-| ⬜ | [06](step06_feed_forward) | Position-wise feed-forward | 3.3 |
-| ⬜ | [07](step07_add_and_norm) | Residual + layer norm | 3.1 |
-| ⬜ | [08](step08_encoder) | Encoder layer & stack | 3.1 |
-| ⬜ | [09](step09_decoder) | Decoder layer & stack (with cross-attention) | 3.1 |
-| ⬜ | [10](step10_full_transformer) | The full Transformer | 3 |
-| ⬜ | [11](step11_training) | Training (label smoothing, warmup schedule) | 5 |
-| ⬜ | [12](step12_inference) | Greedy decoding & beam search | 6.1 |
+| ✅ | [04](step04_masking) | Padding & causal masks | 3.2.3 |
+| ✅ | [05](step05_multi_head_attention) | Multi-head attention | 3.2.2 |
+| ✅ | [06](step06_feed_forward) | Position-wise feed-forward | 3.3 |
+| ✅ | [07](step07_add_and_norm) | Residual + layer norm | 3.1 |
+| ✅ | [08](step08_encoder) | Encoder layer & stack | 3.1 |
+| ✅ | [09](step09_decoder) | Decoder layer & stack (with cross-attention) | 3.1 |
+| ✅ | [10](step10_full_transformer) | The full Transformer | 3 |
+| ✅ | [11](step11_training) | Training (label smoothing, warmup schedule) | 5 |
+| ✅ | [12](step12_inference) | Greedy decoding & beam search | 6.1 |
 
 **Bonus:** from the Transformer to modern LLMs
 
