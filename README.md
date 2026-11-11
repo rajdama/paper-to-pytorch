@@ -1,5 +1,7 @@
 # paper-to-pytorch
 
+[![tests](https://github.com/rajdama/paper-to-pytorch/actions/workflows/tests.yml/badge.svg)](https://github.com/rajdama/paper-to-pytorch/actions/workflows/tests.yml)
+
 **Implementing every component of *Attention Is All You Need* from scratch in PyTorch, one folder per block of the architecture.**
 
 Each folder builds one piece of the Transformer, shows exactly where that piece sits in
