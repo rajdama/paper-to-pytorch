@@ -29,9 +29,33 @@ built-in implementations. See the latest run under **Actions**.
 
 ## Playground
 
-[`playground/index.html`](playground/index.html) is an interactive page with live attention
-heatmaps, positional-encoding waves, and the warmup learning-rate schedule. Download it and
-open it in any browser; no install needed.
+[`playground/index.html`](playground/index.html) is an interactive page that runs three
+experiments from the paper live in your browser, using the same math as the code in this
+repo. Download it and open it in any browser; no install needed.
+
+### Attention (Steps 03–05)
+
+Type any sentence and see the attention matrix: each row is a token deciding how much to
+look at every other token. Switch between 4 heads, turn the $\sqrt{d_k}$ scaling off to see
+softmax saturate onto one token, and turn on the causal mask to hide the future (the hatched
+upper triangle below).
+
+<p align="center"><img src="assets/playground/attention.png" width="820" alt="Playground: attention heatmap for 'the cat sat on the mat because it was tired' with the causal mask on"></p>
+
+### Positional encoding (Step 02)
+
+The full sinusoidal table for 64 positions. Change $d_{model}$ and trace any single
+dimension as a wave: low dimensions oscillate every few positions, high dimensions take
+thousands.
+
+<p align="center"><img src="assets/playground/positional-encoding.png" width="820" alt="Playground: positional encoding heatmap and the wave of dimension 0"></p>
+
+### Learning-rate schedule (Step 11)
+
+The paper's warmup-then-decay schedule over 100k steps. Move $d_{model}$ and the warmup
+length and watch the peak learning rate and where it happens.
+
+<p align="center"><img src="assets/playground/learning-rate.png" width="820" alt="Playground: learning rate rising for 4000 warmup steps then decaying"></p>
 
 ## Roadmap
 

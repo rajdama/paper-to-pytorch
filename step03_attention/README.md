@@ -39,6 +39,12 @@ python -m step03_attention.test_attention
 python -m step03_attention.demo
 ```
 
+## See it live
+
+Open [`playground/index.html`](../playground/index.html), type a sentence, and toggle the $\sqrt{d_k}$ scaling to watch softmax saturate.
+
+<p align="center"><img src="../assets/playground/attention.png" width="720" alt="Playground: attention heatmap"></p>
+
 ## Try this
 
 - In `demo.py`, multiply all vectors by 10 and remove the `/ sqrt(d_k)` line. What happens

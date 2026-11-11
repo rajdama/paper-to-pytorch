@@ -31,6 +31,12 @@ python -m step02_positional_encoding.test_positional_encoding
 python -m step02_positional_encoding.demo
 ```
 
+## See it live
+
+Open [`playground/index.html`](../playground/index.html) to change $d_{model}$ and trace any dimension as a wave.
+
+<p align="center"><img src="../assets/playground/positional-encoding.png" width="720" alt="Playground: positional encoding"></p>
+
 ## Try this
 
 - Open `pe_heatmap.png`. Can you see the "clock hands" running at different speeds?

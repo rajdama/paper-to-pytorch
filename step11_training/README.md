@@ -68,6 +68,12 @@ python -m step11_training.train_reverse          # ~1-2 minutes on CPU
 Then look at `training_curves.png`: the loss falls, accuracy climbs to near 100%, and
 the learning rate traces the warmup-then-decay shape from the paper.
 
+## See it live
+
+Open [`playground/index.html`](../playground/index.html) to change $d_{model}$ and warmup and see how the schedule moves.
+
+<p align="center"><img src="../assets/playground/learning-rate.png" width="720" alt="Playground: learning-rate schedule"></p>
+
 ## Try this
 
 - Set `--warmup 1` (no warmup). Does training still work?

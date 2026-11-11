@@ -270,7 +270,8 @@ footer { color: var(--muted); font-size: 13px; text-align: left; }
 
   // ---------- canvas helpers ----------
   function fit(canvas) {
-    const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = +canvas.getAttribute("height");
+    if (!canvas.dataset.h) canvas.dataset.h = canvas.getAttribute("height"); // the height attribute changes once we scale for dpr
+    const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = +canvas.dataset.h;
     canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); canvas.style.height = h + "px";
     const ctx = canvas.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     return { ctx, w, h };
