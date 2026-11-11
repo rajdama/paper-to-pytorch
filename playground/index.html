@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Transformer Playground</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: a lab bench. One column of experiments, each = controls beside a live instrument. Accent matches the repo's diagram highlight. */
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --fg: #1c2230;
+  --muted: #5d6677;
+  --line: #dde1e8;
+  --accent: #e4572e;
+  --accent-soft: #fbe3db;
+  --cool: #2f6fb3;
+  --hatch: #e9ecf1;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151c; --panel: #1a1f29; --fg: #e6e9ef; --muted: #98a1b2; --line: #2c3341;
+    --accent: #ff7a50; --accent-soft: #3a2219; --cool: #6aa6e8; --hatch: #222835;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151c; --panel: #1a1f29; --fg: #e6e9ef; --muted: #98a1b2; --line: #2c3341;
+  --accent: #ff7a50; --accent-soft: #3a2219; --cool: #6aa6e8; --hatch: #222835;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 56px;
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 28px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--font-display); font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+.lede { max-width: 64ch; color: var(--muted); margin: 0; }
+.lede a, .note a { color: var(--accent); }
+section.exp {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 28px; padding: 24px;
+}
+@media (max-width: 760px) { section.exp { grid-template-columns: minmax(0, 1fr); padding: 18px; gap: 20px; } }
+.exp-head { display: grid; gap: 6px; align-content: start; }
+.step { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.step b { color: var(--accent); font-weight: 500; }
+h2 { font-family: var(--font-display); font-size: 22px; margin: 0; line-height: 1.2; }
+.formula { font-family: var(--font-mono); font-size: 13px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; overflow-x: auto; white-space: nowrap; }
+.desc { color: var(--muted); font-size: 14px; margin: 0; }
+.controls { display: grid; gap: 16px; margin-top: 10px; }
+.ctl { display: grid; gap: 6px; }
+.ctl label, .ctl .lbl { font-size: 13px; font-weight: 600; display: flex; justify-content: space-between; gap: 8px; }
+.ctl output { font-family: var(--font-mono); font-weight: 400; color: var(--accent); font-variant-numeric: tabular-nums; }
+input[type="text"] { width: 100%; font: inherit; font-family: var(--font-mono); font-size: 14px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.toggle { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.toggle input { accent-color: var(--accent); width: 16px; height: 16px; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { font: inherit; font-family: var(--font-mono); font-size: 13px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.instrument { min-width: 0; display: grid; gap: 12px; align-content: start; }
+.readout { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; color: var(--muted); }
+.readout b { font-family: var(--font-mono); color: var(--fg); font-weight: 500; font-variant-numeric: tabular-nums; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+/* attention heatmap */
+.heat-scroll { overflow-x: auto; }
+table.heat { border-collapse: separate; border-spacing: 3px; font-family: var(--font-mono); font-size: 12px; }
+table.heat th { font-weight: 500; color: var(--muted); padding: 2px 4px; white-space: nowrap; }
+table.heat thead th { writing-mode: vertical-rl; transform: rotate(180deg); text-align: left; height: 70px; vertical-align: bottom; }
+table.heat tbody th { text-align: right; }
+table.heat td { width: 42px; min-width: 34px; height: 34px; border-radius: 5px; text-align: center; font-variant-numeric: tabular-nums; font-size: 11px; position: relative; }
+table.heat td.masked { background: repeating-linear-gradient(135deg, var(--hatch) 0 4px, transparent 4px 8px); color: transparent; }
+table.heat tr.hl th, table.heat th.hl { color: var(--accent); }
+.legend { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+.legend .bar { width: 120px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--bg), var(--accent)); border: 1px solid var(--line); }
+canvas { width: 100%; display: block; border-radius: 8px; }
+.pe-wrap { position: relative; }
+footer { color: var(--muted); font-size: 13px; text-align: left; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">paper-to-pytorch · interactive</div>
+    <h1>Transformer Playground</h1>
+    <p class="lede">Three experiments from <em>Attention Is All You Need</em>, running live in your browser with the same math as the
+      <a href="https://github.com/rajdama/paper-to-pytorch" target="_blank" rel="noopener">paper-to-pytorch</a> repo. Move the controls and watch what changes.</p>
+  </header>
+
+  <!-- 1. Attention -->
+  <section class="exp" aria-labelledby="h-attn">
+    <div class="exp-head">
+      <div class="step">repo <b>step 03–05</b> · paper §3.2</div>
+      <h2 id="h-attn">Attention</h2>
+      <div class="formula">softmax(QKᵀ / √d<sub>k</sub>) V</div>
+      <p class="desc">Each row is a token deciding how much to look at every other token. Rows always sum to 1.</p>
+      <div class="controls">
+        <div class="ctl">
+          <label for="sentence">Sentence</label>
+          <input id="sentence" type="text" value="the cat sat on the mat because it was tired" maxlength="80" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="ctl">
+          <span class="lbl">Head</span>
+          <div class="seg" id="heads" role="group" aria-label="Attention head"></div>
+        </div>
+        <div class="ctl">
+          <label for="mag"><span>Vector magnitude</span> <output id="mag-out">1.0×</output></label>
+          <input id="mag" type="range" min="0.5" max="4" step="0.1" value="1">
+        </div>
+        <label class="toggle"><input id="scale" type="checkbox" checked> <span>Divide by √d<sub>k</sub></span></label>
+        <label class="toggle"><input id="causal" type="checkbox"> <span>Causal mask (decoder)</span></label>
+      </div>
+    </div>
+    <div class="instrument">
+      <div class="readout">
+        <span>avg. strongest weight <b id="peak">–</b></span>
+        <span>d<sub>k</sub> <b>16</b></span>
+      </div>
+      <div class="heat-scroll"><table class="heat" id="heat"></table></div>
+      <div class="legend">0 <span class="bar"></span> 1</div>
+      <p class="note">Weights here are untrained and random, so patterns don't mean anything yet. What's real is the mechanics: turn off √d<sub>k</sub> scaling and raise the magnitude, and rows collapse onto one token (softmax saturation). Turn on the causal mask and the upper triangle disappears.</p>
+    </div>
+  </section>
+
+  <!-- 2. Positional encoding -->
+  <section class="exp" aria-labelledby="h-pe">
+    <div class="exp-head">
+      <div class="step">repo <b>step 02</b> · paper §3.5</div>
+      <h2 id="h-pe">Positional encoding</h2>
+      <div class="formula">PE(pos, 2i) = sin(pos / 10000<sup>2i/d</sup>)</div>
+      <p class="desc">Every position gets a unique pattern of sine and cosine waves. Early dimensions oscillate fast, later ones slowly, like the hands of a clock.</p>
+      <div class="controls">
+        <div class="ctl">
+          <label for="ped"><span>d<sub>model</sub></span> <output id="ped-out">128</output></label>
+          <input id="ped" type="range" min="16" max="256" step="16" value="128">
+        </div>
+        <div class="ctl">
+          <label for="pedim"><span>Dimension to trace</span> <output id="pedim-out">0</output></label>
+          <input id="pedim" type="range" min="0" max="127" step="1" value="0">
+        </div>
+      </div>
+    </div>
+    <div class="instrument">
+      <div class="readout"><span>table <b id="pe-shape">64 × 128</b></span><span>wavelength of traced dim <b id="pe-wave">–</b></span></div>
+      <div class="pe-wrap"><canvas id="pe" height="240" aria-label="Positional encoding heatmap, positions down, dimensions across"></canvas></div>
+      <canvas id="pewave" height="120" aria-label="The traced dimension's value across positions"></canvas>
+      <p class="note">Top: rows are positions 0–63, columns are dimensions, orange is +1 and blue is −1. Bottom: the traced column as a wave. The highlighted column on the heatmap is the one being traced.</p>
+    </div>
+  </section>
+
+  <!-- 3. Learning-rate schedule -->
+  <section class="exp" aria-labelledby="h-lr">
+    <div class="exp-head">
+      <div class="step">repo <b>step 11</b> · paper §5.3</div>
+      <h2 id="h-lr">Learning-rate schedule</h2>
+      <div class="formula">d<sup>−0.5</sup> · min(step<sup>−0.5</sup>, step · warmup<sup>−1.5</sup>)</div>
+      <p class="desc">Rise linearly during warmup, then decay with the inverse square root of the step. The paper uses d<sub>model</sub> = 512 and 4000 warmup steps.</p>
+      <div class="controls">
+        <div class="ctl">
+          <label for="lrd"><span>d<sub>model</sub></span> <output id="lrd-out">512</output></label>
+          <input id="lrd" type="range" min="64" max="1024" step="64" value="512">
+        </div>
+        <div class="ctl">
+          <label for="lrw"><span>Warmup steps</span> <output id="lrw-out">4000</output></label>
+          <input id="lrw" type="range" min="200" max="16000" step="200" value="4000">
+        </div>
+      </div>
+    </div>
+    <div class="instrument">
+      <div class="readout"><span>peak lr <b id="lr-peak">–</b></span><span>at step <b id="lr-step">–</b></span><span>lr at step 100k <b id="lr-end">–</b></span></div>
+      <canvas id="lr" height="260" aria-label="Learning rate over 100,000 training steps"></canvas>
+    </div>
+  </section>
+
+  <footer>Built alongside <a href="https://github.com/rajdama/paper-to-pytorch" target="_blank" rel="noopener" style="color:var(--accent)">github.com/rajdama/paper-to-pytorch</a>. Paper: Vaswani et al., 2017, arXiv:1706.03762.</footer>
+</div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  // ---------- seeded randomness so a word always gets the same vector ----------
+  function hash(str) { let h = 2166136261; for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function rng(seed) { return function () { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function gauss(r) { const u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  function randMat(rows, cols, seed, scale) { const r = rng(seed); return Array.from({ length: rows }, () => Array.from({ length: cols }, () => gauss(r) * scale)); }
+  const matvec = (v, M) => M[0].map((_, j) => v.reduce((s, x, i) => s + x * M[i][j], 0));
+  const dot = (a, b) => a.reduce((s, x, i) => s + x * b[i], 0);
+
+  function sinusoid(pos, d) {
+    const out = new Array(d);
+    for (let i = 0; i < d; i += 2) { const a = pos / Math.pow(10000, i / d); out[i] = Math.sin(a); if (i + 1 < d) out[i + 1] = Math.cos(a); }
+    return out;
+  }
+
+  // ---------- 1. attention ----------
+  const D_MODEL = 32, D_K = 16, N_HEADS = 4;
+  const WQ = [], WK = [];
+  for (let h = 0; h < N_HEADS; h++) { WQ.push(randMat(D_MODEL, D_K, 101 + h, 1 / Math.sqrt(D_MODEL))); WK.push(randMat(D_MODEL, D_K, 201 + h, 1 / Math.sqrt(D_MODEL))); }
+  let head = 0;
+  const headsEl = $("heads");
+  ["1", "2", "3", "4", "avg"].forEach((label, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label === "avg" ? "average" : "head " + label;
+    b.setAttribute("aria-pressed", i === 0 ? "true" : "false");
+    b.addEventListener("click", () => { head = i; [...headsEl.children].forEach((c, j) => c.setAttribute("aria-pressed", j === i ? "true" : "false")); renderAttention(); });
+    headsEl.appendChild(b);
+  });
+
+  function embed(word, pos) {
+    const r = rng(hash(word.toLowerCase()));
+    const pe = sinusoid(pos, D_MODEL);
+    return Array.from({ length: D_MODEL }, (_, i) => gauss(r) + 0.8 * pe[i]);
+  }
+  function weightsFor(xs, h, mag, scale, causal) {
+    const q = xs.map((x) => matvec(x.map((v) => v * mag), WQ[h]));
+    const k = xs.map((x) => matvec(x.map((v) => v * mag), WK[h]));
+    return q.map((qi, i) => {
+      const s = k.map((kj, j) => (causal && j > i) ? -Infinity : dot(qi, kj) / (scale ? Math.sqrt(D_K) : 1));
+      const m = Math.max(...s);
+      const e = s.map((v) => v === -Infinity ? 0 : Math.exp(v - m));
+      const z = e.reduce((a, b) => a + b, 0);
+      return e.map((v) => v / z);
+    });
+  }
+  function renderAttention() {
+    const words = $("sentence").value.trim().split(/\s+/).filter(Boolean).slice(0, 12);
+    const table = $("heat");
+    if (!words.length) { table.innerHTML = '<tr><td style="width:auto;color:var(--muted)">Type a sentence to see its attention.</td></tr>'; $("peak").textContent = "–"; return; }
+    const mag = +$("mag").value, scale = $("scale").checked, causal = $("causal").checked;
+    $("mag-out").textContent = mag.toFixed(1) + "×";
+    const xs = words.map((w, i) => embed(w, i));
+    let W;
+    if (head < N_HEADS) W = weightsFor(xs, head, mag, scale, causal);
+    else {
+      const all = [...Array(N_HEADS).keys()].map((h) => weightsFor(xs, h, mag, scale, causal));
+      W = all[0].map((row, i) => row.map((_, j) => all.reduce((s, A) => s + A[i][j], 0) / N_HEADS));
+    }
+    const accent = css("--accent");
+    let html = "<thead><tr><th></th>" + words.map((w, j) => `<th data-col="${j}">${esc(w)}</th>`).join("") + "</tr></thead><tbody>";
+    W.forEach((row, i) => {
+      html += `<tr data-row="${i}"><th>${esc(words[i])}</th>`;
+      row.forEach((v, j) => {
+        if (causal && j > i) { html += `<td class="masked" title="masked: ${esc(words[i])} cannot see ${esc(words[j])}">·</td>`; return; }
+        const pct = Math.round(v * 100);
+        const fg = v > 0.55 ? "#fff" : "var(--fg)";
+        html += `<td style="background:color-mix(in srgb, ${accent} ${pct}%, var(--bg));color:${fg}" title="${esc(words[i])} → ${esc(words[j])}: ${v.toFixed(3)}">${v.toFixed(2).replace(/^0/, "")}</td>`;
+      });
+      html += "</tr>";
+    });
+    table.innerHTML = html + "</tbody>";
+    const peak = W.reduce((s, r) => s + Math.max(...r), 0) / W.length;
+    $("peak").textContent = peak.toFixed(2);
+  }
+  function esc(s) { return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+  ["sentence", "mag", "scale", "causal"].forEach((id) => $(id).addEventListener("input", renderAttention));
+
+  // ---------- canvas helpers ----------
+  function fit(canvas) {
+    const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = +canvas.getAttribute("height");
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); canvas.style.height = h + "px";
+    const ctx = canvas.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w, h };
+  }
+  function hexToRgb(c) {
+    const probe = document.createElement("div"); probe.style.color = c; document.body.appendChild(probe);
+    const m = getComputedStyle(probe).color.match(/\d+/g).map(Number); probe.remove(); return m;
+  }
+
+  // ---------- 2. positional encoding ----------
+  const MAXPOS = 64;
+  function renderPE() {
+    const d = +$("ped").value;
+    const dimEl = $("pedim"); dimEl.max = d - 1; if (+dimEl.value > d - 1) dimEl.value = d - 1;
+    const dim = +dimEl.value;
+    $("ped-out").textContent = d; $("pedim-out").textContent = dim; $("pe-shape").textContent = `${MAXPOS} × ${d}`;
+    const i2 = dim - (dim % 2);
+    const wl = 2 * Math.PI * Math.pow(10000, i2 / d);
+    $("pe-wave").textContent = wl < 1000 ? wl.toFixed(1) + " positions" : Math.round(wl).toLocaleString() + " positions";
+
+    const pos = [hexToRgb(css("--accent")), hexToRgb(css("--cool")), hexToRgb(css("--panel"))];
+    const { ctx, w, h } = fit($("pe"));
+    const cw = w / d, ch = h / MAXPOS;
+    for (let p = 0; p < MAXPOS; p++) {
+      const row = sinusoid(p, d);
+      for (let i = 0; i < d; i++) {
+        const v = row[i], base = v >= 0 ? pos[0] : pos[1], t = Math.abs(v);
+        const c = base.map((b, k) => Math.round(pos[2][k] + (b - pos[2][k]) * t));
+        ctx.fillStyle = `rgb(${c})`; ctx.fillRect(i * cw, p * ch, Math.ceil(cw), Math.ceil(ch));
+      }
+    }
+    ctx.strokeStyle = css("--fg"); ctx.lineWidth = 2; ctx.strokeRect(dim * cw, 1, Math.max(cw, 2), h - 2);
+
+    const g = fit($("pewave")); const c2 = g.ctx;
+    const padL = 28, padR = 8, padT = 10, padB = 20, gw = g.w - padL - padR, gh = g.h - padT - padB;
+    c2.font = "11px " + css("--font-mono"); c2.fillStyle = css("--muted"); c2.strokeStyle = css("--line"); c2.lineWidth = 1;
+    [1, 0, -1].forEach((v) => { const y = padT + (1 - (v + 1) / 2) * gh; c2.beginPath(); c2.moveTo(padL, y); c2.lineTo(g.w - padR, y); c2.stroke(); c2.fillText(String(v).replace("-", "−"), 4, y + 4); });
+    [0, 16, 32, 48, 63].forEach((p) => { const x = padL + (p / (MAXPOS - 1)) * gw; c2.fillText(p, x - 6, g.h - 4); });
+    c2.strokeStyle = css("--accent"); c2.lineWidth = 2; c2.beginPath();
+    for (let s = 0; s <= 400; s++) {
+      const p = (s / 400) * (MAXPOS - 1), a = p / Math.pow(10000, i2 / d), v = dim % 2 ? Math.cos(a) : Math.sin(a);
+      const x = padL + (p / (MAXPOS - 1)) * gw, y = padT + (1 - (v + 1) / 2) * gh;
+      s ? c2.lineTo(x, y) : c2.moveTo(x, y);
+    }
+    c2.stroke();
+    c2.fillStyle = css("--accent");
+    for (let p = 0; p < MAXPOS; p++) { const v = sinusoid(p, d)[dim]; c2.beginPath(); c2.arc(padL + (p / (MAXPOS - 1)) * gw, padT + (1 - (v + 1) / 2) * gh, 1.8, 0, 7); c2.fill(); }
+  }
+  ["ped", "pedim"].forEach((id) => $(id).addEventListener("input", renderPE));
+
+  // ---------- 3. learning-rate schedule ----------
+  const TOTAL = 100000;
+  const lrAt = (s, d, w) => Math.pow(d, -0.5) * Math.min(Math.pow(s, -0.5), s * Math.pow(w, -1.5));
+  function niceMax(v) { const e = Math.pow(10, Math.floor(Math.log10(v))); for (const m of [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) if (m * e >= v) return m * e; return 10 * e; }
+  function renderLR() {
+    const d = +$("lrd").value, w = +$("lrw").value;
+    $("lrd-out").textContent = d; $("lrw-out").textContent = w.toLocaleString();
+    const peak = lrAt(w, d, w);
+    $("lr-peak").textContent = peak.toExponential(2); $("lr-step").textContent = w.toLocaleString(); $("lr-end").textContent = lrAt(TOTAL, d, w).toExponential(2);
+
+    const { ctx, w: W, h: H } = fit($("lr"));
+    const padL = 64, padR = 12, padT = 12, padB = 30, gw = W - padL - padR, gh = H - padT - padB;
+    const yMax = niceMax(peak * 1.08);
+    ctx.font = "11px " + css("--font-mono"); ctx.lineWidth = 1;
+    for (let k = 0; k <= 4; k++) {
+      const v = (yMax * k) / 4, y = padT + gh - (v / yMax) * gh;
+      ctx.strokeStyle = css("--line"); ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+      ctx.fillStyle = css("--muted"); ctx.fillText(v === 0 ? "0" : v.toExponential(1), 6, y + 4);
+    }
+    const xTicks = W < 480 ? [0, 50000, 100000] : [0, 25000, 50000, 75000, 100000];
+    xTicks.forEach((s) => { const x = padL + (s / TOTAL) * gw; ctx.fillStyle = css("--muted"); ctx.textAlign = s === 0 ? "left" : s === TOTAL ? "right" : "center"; ctx.fillText(s === 0 ? "0" : (s / 1000) + "k", x, H - 10); });
+    ctx.textAlign = "left";
+
+    // area + line
+    const pts = [];
+    for (let i = 0; i <= 600; i++) { const s = Math.max(1, (i / 600) * TOTAL); pts.push([padL + (s / TOTAL) * gw, padT + gh - (lrAt(s, d, w) / yMax) * gh]); }
+    ctx.beginPath(); ctx.moveTo(pts[0][0], padT + gh); pts.forEach(([x, y]) => ctx.lineTo(x, y)); ctx.lineTo(pts[pts.length - 1][0], padT + gh); ctx.closePath();
+    ctx.fillStyle = css("--accent-soft"); ctx.fill();
+    ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.strokeStyle = css("--accent"); ctx.lineWidth = 2; ctx.stroke();
+
+    // warmup marker + peak dot
+    const px = padL + (w / TOTAL) * gw, py = padT + gh - (peak / yMax) * gh;
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = css("--muted"); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px, padT + gh); ctx.lineTo(px, py); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = css("--accent"); ctx.beginPath(); ctx.arc(px, py, 4.5, 0, 7); ctx.fill();
+    ctx.fillStyle = css("--fg"); const label = "end of warmup";
+    const lx = px + 8 + ctx.measureText(label).width > W - padR ? px - 8 - ctx.measureText(label).width : px + 8;
+    ctx.fillText(label, lx, Math.max(py - 8, padT + 10));
+  }
+  ["lrd", "lrw"].forEach((id) => $(id).addEventListener("input", renderLR));
+
+  // ---------- redraw on resize and theme change ----------
+  function renderAll() { renderAttention(); renderPE(); renderLR(); }
+  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderPE(); renderLR(); }, 120); });
+  try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll); } catch (e) {}
+  new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { renderPE(); renderLR(); });
+  renderAll();
+})();
+</script>
+</body></html>

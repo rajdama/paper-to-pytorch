@@ -10,6 +10,29 @@ Step 10 the folders combine into the complete model, which is then trained and u
 
 <p align="center"><img src="assets/architecture.svg" width="480" alt="The Transformer architecture"></p>
 
+## Does it work?
+
+Yes. Every push trains the full encoder-decoder Transformer (Steps 01–12) on GitHub's
+servers, on a toy task: reverse a sequence of digits. After 2,000 steps on a CPU:
+
+```
+[3, 5, 2, 2, 8, 9, 4, 2, 8]  ->  [8, 2, 4, 9, 8, 2, 2, 5, 3]
+[2, 0, 3, 9, 5, 8, 5]        ->  [5, 8, 5, 9, 3, 0, 2]
+
+exact-match accuracy on 200 unseen sequences
+  greedy decoding:      100.0%
+  beam search (k = 4):   99.0%
+```
+
+63 tests check each component against the paper's formulas and against PyTorch's
+built-in implementations. See the latest run under **Actions**.
+
+## Playground
+
+[`playground/index.html`](playground/index.html) is an interactive page with live attention
+heatmaps, positional-encoding waves, and the warmup learning-rate schedule. Download it and
+open it in any browser; no install needed.
+
 ## Roadmap
 
 | | Step | Component | Paper section |
