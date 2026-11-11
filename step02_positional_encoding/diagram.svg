@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 830" width="600" height="830" font-family="Helvetica, Arial, sans-serif">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2b2b2b"/></marker></defs>
+<rect width="600" height="830" fill="#ffffff"/>
+<text x="300.0" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#2b2b2b">The Transformer</text>
+<text x="300.0" y="56" text-anchor="middle" font-size="12" fill="#777">after Figure 1 of “Attention Is All You Need” (Vaswani et al., 2017)</text>
+<rect x="58.0" y="460" width="234" height="195" rx="14" fill="#fafafa" stroke="#bdbdbd" stroke-width="1.4"/>
+<rect x="308.0" y="240" width="234" height="415" rx="14" fill="#fafafa" stroke="#bdbdbd" stroke-width="1.4"/>
+<text x="46.0" y="560" text-anchor="end" font-size="15" font-weight="700" fill="#2b2b2b">N×</text>
+<text x="554.0" y="450" font-size="15" font-weight="700" fill="#2b2b2b">×N</text>
+<line x1="175" y1="785" x2="175" y2="750.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="175" y1="720.0" x2="175" y2="696" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="175" y1="674" x2="175" y2="640.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="785" x2="425" y2="750.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="720.0" x2="425" y2="696" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="674" x2="425" y2="640.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="175" y1="610.0" x2="175" y2="595.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="175" y1="565.0" x2="175" y2="545.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="175" y1="515.0" x2="175" y2="500.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="610.0" x2="425" y2="595.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="565.0" x2="425" y2="420.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="390.0" x2="425" y2="375.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="345.0" x2="425" y2="325.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="295.0" x2="425" y2="280.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="250.0" x2="425" y2="210.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="180.0" x2="425" y2="165.0" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<line x1="425" y1="135.0" x2="425" y2="100" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M175,649.0 L74.0,649.0 L74.0,580 L90.0,580" fill="none" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M175,554.0 L74.0,554.0 L74.0,485 L90.0,485" fill="none" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M425,649.0 L324.0,649.0 L324.0,580 L340.0,580" fill="none" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M425,429.0 L324.0,429.0 L324.0,360 L340.0,360" fill="none" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M425,334.0 L324.0,334.0 L324.0,265 L340.0,265" fill="none" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M175,470.0 L175,446 L395.0,446 L395.0,420.0" fill="none" stroke="#2b2b2b" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="389.0" y="462" text-anchor="end" font-size="11" fill="#666">K, V</text>
+<text x="431" y="500" font-size="11" fill="#666">Q</text>
+<rect x="90.0" y="720.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="175" y="739.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Input Embedding</text>
+<rect x="90.0" y="610.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="175" y="629.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Multi-Head Attention</text>
+<rect x="90.0" y="565.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="175" y="584.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Add &amp; Norm</text>
+<rect x="90.0" y="515.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="175" y="534.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Feed Forward</text>
+<rect x="90.0" y="470.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="175" y="489.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Add &amp; Norm</text>
+<rect x="340.0" y="720.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="739.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Output Embedding</text>
+<rect x="340.0" y="610.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="629.5" text-anchor="middle" font-size="12" fill="#a9a9a9">Masked Multi-Head Attention</text>
+<rect x="340.0" y="565.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="584.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Add &amp; Norm</text>
+<rect x="340.0" y="390.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="409.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Multi-Head Attention</text>
+<rect x="340.0" y="345.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="364.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Add &amp; Norm</text>
+<rect x="340.0" y="295.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="314.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Feed Forward</text>
+<rect x="340.0" y="250.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="269.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Add &amp; Norm</text>
+<rect x="340.0" y="180.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="199.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Linear</text>
+<rect x="340.0" y="135.0" width="170" height="30" rx="6" fill="#f1f1f1" stroke="#cfcfcf" stroke-width="1.2"/>
+<text x="425" y="154.5" text-anchor="middle" font-size="13" fill="#a9a9a9">Softmax</text>
+<circle cx="175" cy="685" r="11" fill="#fff" stroke="#e4572e" stroke-width="3"/>
+<path d="M169,685 L181,685 M175,679 L175,691" stroke="#2b2b2b" stroke-width="1.6"/>
+<path d="M103,685 q6,-12 12,0 t12,0 t12,0" fill="none" stroke="#e4572e" stroke-width="1.6"/>
+<line x1="137" y1="685" x2="163" y2="685" stroke="#e4572e" stroke-width="1.4"/>
+<text x="95" y="683" text-anchor="end" font-size="11" fill="#e4572e">Positional</text>
+<text x="95" y="696" text-anchor="end" font-size="11" fill="#e4572e">Encoding</text>
+<circle cx="425" cy="685" r="11" fill="#fff" stroke="#e4572e" stroke-width="3"/>
+<path d="M419,685 L431,685 M425,679 L425,691" stroke="#2b2b2b" stroke-width="1.6"/>
+<path d="M459,685 q6,-12 12,0 t12,0 t12,0" fill="none" stroke="#e4572e" stroke-width="1.6"/>
+<line x1="459" y1="685" x2="437" y2="685" stroke="#e4572e" stroke-width="1.4"/>
+<text x="505" y="683" text-anchor="start" font-size="11" fill="#e4572e">Positional</text>
+<text x="505" y="696" text-anchor="start" font-size="11" fill="#e4572e">Encoding</text>
+<text x="175" y="803" text-anchor="middle" font-size="13" fill="#2b2b2b">Inputs</text>
+<text x="425" y="803" text-anchor="middle" font-size="13" fill="#2b2b2b">Outputs (shifted right)</text>
+<text x="425" y="90" text-anchor="middle" font-size="13" fill="#2b2b2b">Output Probabilities</text>
+<text x="300.0" y="824" text-anchor="middle" font-size="13" font-weight="700" fill="#e4572e">Step 02 · Positional Encoding</text>
+</svg>
