@@ -86,6 +86,10 @@ table.heat tr.hl th, table.heat th.hl { color: var(--accent); }
 .legend .bar { width: 120px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--bg), var(--accent)); border: 1px solid var(--line); }
 canvas { width: 100%; display: block; border-radius: 8px; }
 .pe-wrap { position: relative; }
+.rope-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 14px; }
+@media (max-width: 520px) { .rope-grid { grid-template-columns: minmax(0, 1fr); } }
+.reroll { justify-self: start; font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.reroll:hover { border-color: var(--accent); }
 footer { color: var(--muted); font-size: 13px; text-align: left; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -95,7 +99,7 @@ footer { color: var(--muted); font-size: 13px; text-align: left; }
   <header>
     <div class="eyebrow">paper-to-pytorch · interactive</div>
     <h1>Transformer Playground</h1>
-    <p class="lede">Three experiments from <em>Attention Is All You Need</em>, running live in your browser with the same math as the
+    <p class="lede">Four experiments from <em>Attention Is All You Need</em> and the models that followed it, running live in your browser with the same math as the
       <a href="https://github.com/rajdama/paper-to-pytorch" target="_blank" rel="noopener">paper-to-pytorch</a> repo. Move the controls and watch what changes.</p>
   </header>
 
@@ -181,6 +185,38 @@ footer { color: var(--muted); font-size: 13px; text-align: left; }
     <div class="instrument">
       <div class="readout"><span>peak lr <b id="lr-peak">–</b></span><span>at step <b id="lr-step">–</b></span><span>lr at step 100k <b id="lr-end">–</b></span></div>
       <canvas id="lr" height="260" aria-label="Learning rate over 100,000 training steps"></canvas>
+    </div>
+  </section>
+
+  <!-- 4. RoPE vs added positions -->
+  <section class="exp" aria-labelledby="h-rope">
+    <div class="exp-head">
+      <div class="step">repo <b>bonus 17</b> · RoFormer, LLaMA</div>
+      <h2 id="h-rope">Rotary position embeddings</h2>
+      <div class="formula">score(m, n) = g(m − n)</div>
+      <p class="desc">Each cell is the attention score between a query at position m (row) and a key at position n (column), for the same q and k vectors. With RoPE, the score depends only on the distance m − n, so every diagonal is one colour.</p>
+      <div class="controls">
+        <div class="ctl">
+          <span class="lbl">Position method</span>
+          <div class="seg" id="rope-mode" role="group" aria-label="Position method">
+            <button type="button" aria-pressed="true" data-mode="rope">RoPE (rotate)</button>
+            <button type="button" aria-pressed="false" data-mode="add">Sinusoid (add)</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <label for="rope-m"><span>Query position m</span> <output id="rope-m-out">12</output></label>
+          <input id="rope-m" type="range" min="0" max="31" step="1" value="12">
+        </div>
+        <button type="button" class="reroll" id="rope-new">New random q and k</button>
+      </div>
+    </div>
+    <div class="instrument">
+      <div class="readout"><span>diagonal spread <b id="rope-spread">–</b></span><span>d<sub>head</sub> <b>16</b></span><span>positions <b>0–31</b></span></div>
+      <div class="rope-grid">
+        <canvas id="rope-heat" height="300" aria-label="Score for every pair of query and key positions"></canvas>
+        <canvas id="rope-dial" height="300" aria-label="The first dimension pair of q, rotated by position"></canvas>
+      </div>
+      <p class="note">Left: the 32 × 32 score grid; the highlighted row is query position m. Right: the first pair of q's dimensions drawn as an arrow. RoPE turns it by m × θ, and the angle between q and k at any two positions is all that matters. "Diagonal spread" is how much the scores vary along each diagonal: 0 means the score is a pure function of distance.</p>
     </div>
   </section>
 
@@ -362,12 +398,84 @@ footer { color: var(--muted); font-size: 13px; text-align: left; }
   }
   ["lrd", "lrw"].forEach((id) => $(id).addEventListener("input", renderLR));
 
+  // ---------- 4. RoPE ----------
+  const RD = 16, RP = 32;
+  let ropeMode = "rope", ropeSeed = 7;
+  let rq, rk;
+  function rollQK() { const r = rng(ropeSeed); rq = Array.from({ length: RD }, () => gauss(r)); rk = Array.from({ length: RD }, () => gauss(r)); }
+  rollQK();
+  function ropeVec(v, pos) {   // rotate pair (i, i + d/2) by pos * theta_i  (LLaMA's rotate-half layout)
+    const h = RD / 2, out = v.slice();
+    for (let i = 0; i < h; i++) {
+      const a = pos / Math.pow(10000, (2 * i) / RD), c = Math.cos(a), s = Math.sin(a);
+      out[i] = v[i] * c - v[i + h] * s; out[i + h] = v[i + h] * c + v[i] * s;
+    }
+    return out;
+  }
+  function addVec(v, pos) { const pe = sinusoid(pos, RD); return v.map((x, i) => x + 1.5 * pe[i]); }
+  function ropeScores() {
+    const f = ropeMode === "rope" ? ropeVec : addVec;
+    const Q = [...Array(RP).keys()].map((m) => f(rq, m)), K = [...Array(RP).keys()].map((n) => f(rk, n));
+    return Q.map((q) => K.map((k) => dot(q, k)));
+  }
+  function renderRoPE() {
+    const m = +$("rope-m").value; $("rope-m-out").textContent = m;
+    const S = ropeScores();
+    let lo = Infinity, hi = -Infinity; S.forEach((r) => r.forEach((v) => { lo = Math.min(lo, v); hi = Math.max(hi, v); }));
+    // spread along diagonals
+    let spread = 0;
+    for (let d = -(RP - 1); d < RP; d++) {
+      const vals = []; for (let i = 0; i < RP; i++) { const j = i - d; if (j >= 0 && j < RP) vals.push(S[i][j]); }
+      spread = Math.max(spread, Math.max(...vals) - Math.min(...vals));
+    }
+    $("rope-spread").textContent = spread < 1e-9 ? "0.000" : spread.toFixed(3);
+
+    const accent = hexToRgb(css("--accent")), cool = hexToRgb(css("--cool")), base = hexToRgb(css("--panel"));
+    const { ctx, w, h } = fit($("rope-heat"));
+    const size = Math.min(w, h) - 18, cell = size / RP, ox = 18, oy = 0;
+    const amp = Math.max(Math.abs(lo), Math.abs(hi)) || 1;
+    for (let i = 0; i < RP; i++) for (let j = 0; j < RP; j++) {
+      const v = S[i][j] / amp, t = Math.abs(v), b = v >= 0 ? accent : cool;
+      ctx.fillStyle = `rgb(${base.map((x, k) => Math.round(x + (b[k] - x) * t))})`;
+      ctx.fillRect(ox + j * cell, oy + i * cell, Math.ceil(cell), Math.ceil(cell));
+    }
+    ctx.strokeStyle = css("--fg"); ctx.lineWidth = 2; ctx.strokeRect(ox + 1, oy + m * cell, size - 2, cell);
+    ctx.fillStyle = css("--muted"); ctx.font = "11px " + css("--font-mono");
+    ctx.save(); ctx.translate(11, size / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = "center"; ctx.fillText("query position m", 0, 0); ctx.restore();
+    ctx.textAlign = "center"; ctx.fillText("key position n", ox + size / 2, size + 14); ctx.textAlign = "left";
+
+    const g = fit($("rope-dial")), c2 = g.ctx, cx = g.w / 2, cy = g.h / 2 - 6, R = Math.min(g.w, g.h) / 2 - 26;
+    c2.strokeStyle = css("--line"); c2.lineWidth = 1; c2.beginPath(); c2.arc(cx, cy, R, 0, 7); c2.stroke();
+    c2.beginPath(); c2.moveTo(cx - R, cy); c2.lineTo(cx + R, cy); c2.moveTo(cx, cy - R); c2.lineTo(cx, cy + R); c2.stroke();
+    const h2 = RD / 2;
+    const drawVec = (v, color, label) => {
+      const len = Math.hypot(v[0], v[h2]) || 1, x = cx + (v[0] / len) * R * 0.9, y = cy - (v[h2] / len) * R * 0.9;
+      c2.strokeStyle = color; c2.fillStyle = color; c2.lineWidth = 2.5;
+      c2.beginPath(); c2.moveTo(cx, cy); c2.lineTo(x, y); c2.stroke();
+      c2.beginPath(); c2.arc(x, y, 4, 0, 7); c2.fill();
+      c2.font = "12px " + css("--font-mono"); c2.fillText(label, x + (x >= cx ? 7 : -40), y + (y >= cy ? 14 : -6));
+    };
+    const f = ropeMode === "rope" ? ropeVec : addVec;
+    drawVec(f(rq, 0), css("--muted"), "q@0");
+    drawVec(f(rq, m), css("--accent"), "q@" + m);
+    c2.fillStyle = css("--muted"); c2.font = "11px " + css("--font-mono"); c2.textAlign = "center";
+    c2.fillText(ropeMode === "rope" ? `turned by ${(m * 57.2958).toFixed(0) % 360}° (θ₀ = 1 rad)` : "shifted, not rotated", cx, g.h - 6);
+    c2.textAlign = "left";
+  }
+  [...$("rope-mode").children].forEach((b) => b.addEventListener("click", () => {
+    ropeMode = b.dataset.mode;
+    [...$("rope-mode").children].forEach((c) => c.setAttribute("aria-pressed", c === b ? "true" : "false"));
+    renderRoPE();
+  }));
+  $("rope-m").addEventListener("input", renderRoPE);
+  $("rope-new").addEventListener("click", () => { ropeSeed++; rollQK(); renderRoPE(); });
+
   // ---------- redraw on resize and theme change ----------
-  function renderAll() { renderAttention(); renderPE(); renderLR(); }
-  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderPE(); renderLR(); }, 120); });
+  function renderAll() { renderAttention(); renderPE(); renderLR(); renderRoPE(); }
+  let t; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderPE(); renderLR(); renderRoPE(); }, 120); });
   try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll); } catch (e) {}
   new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { renderPE(); renderLR(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { renderPE(); renderLR(); renderRoPE(); });
   renderAll();
 })();
 </script>

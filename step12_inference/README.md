@@ -50,6 +50,21 @@ python -m step12_inference.demo
 python -m step12_inference.demo 3 1 4 1 5 9 2 6
 ```
 
+## Results: what the trained model looks at
+
+`attention_map.py` plots the decoder's cross-attention while reversing `[3, 1, 4, 1, 5, 9, 2, 6]`.
+Rows are the output tokens being written; columns are the source tokens.
+
+<p align="center"><img src="../results/transformer/cross_attention.png" width="820" alt="Cross-attention of the trained Transformer"></p>
+
+Layer 1 is blurry, but in layer 2 every head has found the same rule: to write output
+token t, look at source token n − t. That's the bright anti-diagonal (top right to bottom left),
+and it's exactly the algorithm for reversing. Nobody programmed it; it was learned from
+examples. The final row (`<eos>`) attends to the source `<eos>`.
+
+On 200 unseen sequences: greedy decoding **99.0%** exact match, beam search **98.0%**
+([log](../results/transformer/decode_log.txt)).
+
 ## Try this
 
 - Train for only `--steps 400` and compare greedy vs beam accuracy. Where does beam search help most: on a weak model or a strong one?

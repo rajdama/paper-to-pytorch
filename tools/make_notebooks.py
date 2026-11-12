@@ -281,6 +281,20 @@ display(Image("bonus/step15_kv_cache/benchmark.png"))
 %time !python -m bonus.step13_gpt_decoder_only.generate --prompt "ROMEO:" --tokens 240 --kv-cache
 %time !python -m bonus.step13_gpt_decoder_only.generate --prompt "ROMEO:" --tokens 240
 """),
+    md("""
+## Bonus 16 · LoRA fine-tuning
+Freeze the trained model and teach it a new style (ALL CAPS) by training two thin matrices
+per attention projection, about 2% of the parameters.
+"""),
+    code("!python -m bonus.step16_lora.finetune_caps --steps 600"),
+    md("""
+## Bonus 17 · GPT-2 style vs LLaMA style
+RMSNorm + RoPE + SwiGLU against LayerNorm + learned positions + ReLU, at the same size and budget.
+"""),
+    code("""
+!python -m bonus.step17_llama_style.compare --steps 3000
+display(Image("bonus/step17_llama_style/compare.png"))
+"""),
 ])
 
 if __name__ == "__main__":

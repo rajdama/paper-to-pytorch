@@ -68,6 +68,15 @@ python -m step11_training.train_reverse          # ~1-2 minutes on CPU
 Then look at `training_curves.png`: the loss falls, accuracy climbs to near 100%, and
 the learning rate traces the warmup-then-decay shape from the paper.
 
+## Results
+
+From the [results workflow](../results/transformer/train_log.txt), on GitHub's CPUs:
+
+<p align="center"><img src="../results/transformer/training_curves.png" width="820" alt="Loss, token accuracy and learning rate during training"></p>
+
+Token accuracy reaches 99.8% after 2,000 steps (about a minute). The learning-rate panel
+traces the paper's schedule: linear warmup for 200 steps, then $1/\sqrt{\text{step}}$ decay.
+
 ## See it live
 
 Open [`playground/index.html`](../playground/index.html) to change $d_{model}$ and warmup and see how the schedule moves.

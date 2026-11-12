@@ -2,7 +2,7 @@
 Fine-tune a pretrained TinyGPT with LoRA to write Shakespeare in ALL CAPITALS.
 
 A small, visible change of style: the pretrained model already knows Shakespeare; LoRA
-teaches it a new "dialect" while ~97% of the weights stay frozen.
+teaches it a new "dialect" while ~98% of the weights stay frozen.
 
 First pretrain:  python -m bonus.step13_gpt_decoder_only.train_gpt
 Then run:        python -m bonus.step16_lora.finetune_caps
