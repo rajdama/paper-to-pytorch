@@ -76,3 +76,27 @@ jobs:
           path: |
             bonus/step13_gpt_decoder_only/loss_char.png
             bonus/step15_kv_cache/benchmark.png
+
+  vit:
+    name: train ViT on MNIST (paper 2)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies (CPU-only PyTorch + torchvision)
+        run: |
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install matplotlib
+      - name: Train a Vision Transformer on MNIST
+        run: python -m vit.step03_train_mnist.train_mnist --epochs 3
+      - name: Attention rollout on test digits
+        run: python -m vit.step03_train_mnist.attention_map
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vit-results
+          path: |
+            vit/step03_train_mnist/training_curves.png
+            vit/step03_train_mnist/attention_rollout.png
