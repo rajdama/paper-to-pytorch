@@ -38,10 +38,14 @@ jobs:
         run: python -m step11_training.train_reverse
       - name: Decode with the trained model (Step 12)
         run: python -m step12_inference.demo
+      - name: Plot cross-attention of the trained model (Step 12)
+        run: python -m step12_inference.attention_map
       - uses: actions/upload-artifact@v4
         with:
           name: transformer-results
-          path: step11_training/training_curves.png
+          path: |
+            step11_training/training_curves.png
+            step12_inference/cross_attention.png
 
   tinygpt:
     name: train TinyGPT (bonus 13-15)

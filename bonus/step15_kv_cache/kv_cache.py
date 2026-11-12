@@ -37,9 +37,13 @@ class KVCache:
             self.values[layer] = torch.cat([self.values[layer], v], dim=2)
         return self.keys[layer], self.values[layer]
 
+    def layer_length(self, layer: int) -> int:
+        return 0 if self.keys[layer] is None else self.keys[layer].size(2)
+
     @property
     def length(self) -> int:
-        return 0 if self.keys[0] is None else self.keys[0].size(2)
+        """Tokens cached so far (read from the LAST layer, which is updated last)."""
+        return self.layer_length(len(self.keys) - 1)
 
     def num_bytes(self) -> int:
         return sum(t.numel() * t.element_size() for t in self.keys + self.values if t is not None)
@@ -50,7 +54,7 @@ def cached_attention(mha, x: torch.Tensor, cache: KVCache, layer: int) -> torch.
     q = mha._split_heads(mha.w_q(x))                       # only the NEW tokens' queries
     k_new = mha._split_heads(mha.w_k(x))
     v_new = mha._split_heads(mha.w_v(x))
-    past = cache.length
+    past = cache.layer_length(layer)    # careful: earlier layers were already extended in this pass
     k, v = cache.append(layer, k_new, v_new)               # all keys/values so far
 
     T_new, T_all = x.size(1), k.size(2)
