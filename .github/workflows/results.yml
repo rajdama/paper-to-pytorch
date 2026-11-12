@@ -1,0 +1,103 @@
+name: update results
+
+# Run by hand (Actions -> update results -> Run workflow). Trains every model in the repo
+# on GitHub's CPUs and commits the plots and logs to results/, which the READMEs show.
+
+on:
+  workflow_dispatch:
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  transformer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install matplotlib
+      - name: Train, decode and plot cross-attention (steps 11-12)
+        run: |
+          mkdir -p out
+          python -m step11_training.train_reverse | tee out/train_log.txt
+          python -m step12_inference.demo | tee out/decode_log.txt
+          python -m step12_inference.attention_map 3 1 4 1 5 9 2 6 | tee -a out/decode_log.txt
+          cp step11_training/training_curves.png step12_inference/cross_attention.png out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: transformer
+          path: out/
+
+  tinygpt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install matplotlib
+      - name: BPE, TinyGPT (char and BPE) and KV-cache benchmark (bonus 13-15)
+        run: |
+          mkdir -p out
+          python -m bonus.data
+          python -m bonus.step14_bpe_tokenizer.demo | tee out/bpe_log.txt
+          python -m bonus.step13_gpt_decoder_only.train_gpt --steps 2500 | tee out/train_char_log.txt
+          python -m bonus.step13_gpt_decoder_only.train_gpt --tokenizer bpe --vocab-size 512 --steps 2500 | tee out/train_bpe_log.txt
+          python -m bonus.step13_gpt_decoder_only.generate --kv-cache --prompt "JULIET:" --tokens 200 | tee out/generate_log.txt
+          python -m bonus.step15_kv_cache.benchmark | tee out/benchmark_log.txt
+          cp bonus/step13_gpt_decoder_only/loss_char.png bonus/step13_gpt_decoder_only/loss_bpe.png \
+             bonus/step15_kv_cache/benchmark.png out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tinygpt
+          path: out/
+
+  vit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: |
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          pip install matplotlib
+      - name: Train ViT on MNIST and plot attention rollout
+        run: |
+          mkdir -p out
+          python -m vit.step03_train_mnist.train_mnist --epochs 6 | tee out/train_log.txt
+          python -m vit.step03_train_mnist.attention_map | tee -a out/train_log.txt
+          cp vit/step03_train_mnist/training_curves.png vit/step03_train_mnist/attention_rollout.png out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vit
+          path: out/
+
+  commit:
+    needs: [transformer, tinygpt, vit]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: results          # each artifact lands in results/<job name>/
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "Update training results [skip ci]"
+          git pull --rebase origin main
+          git push

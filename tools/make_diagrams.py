@@ -73,6 +73,9 @@ STEPS = {
     "step10_full_transformer":     ("Step 10 · The Full Transformer", ALL),
     "step11_training":             ("Step 11 · Training", ALL),
     "step12_inference":            ("Step 12 · Inference (decoding)", {"linear", "softmax", "out_emb"}),
+    "bonus/step13_gpt_decoder_only": ("Bonus 13 · GPT keeps only these boxes",
+                                      {"out_emb", "pe_dec", "dec_mmha", "dec_an1", "dec_ff", "dec_an3",
+                                       "linear", "softmax"}),
 }
 
 
