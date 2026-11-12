@@ -1,0 +1,10 @@
+ViT: 139,018 parameters on cpu; 28x28 image -> 16 patches of 7x7 + [CLS]
+epoch 1  last loss 0.750  test accuracy 93.16%  (20s)
+epoch 2  last loss 0.612  test accuracy 95.58%  (40s)
+epoch 3  last loss 0.595  test accuracy 96.57%  (60s)
+epoch 4  last loss 0.606  test accuracy 97.58%  (80s)
+epoch 5  last loss 0.555  test accuracy 98.02%  (99s)
+epoch 6  last loss 0.551  test accuracy 98.12%  (118s)
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/checkpoints/vit_mnist.pt
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/vit/step03_train_mnist/training_curves.png
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/vit/step03_train_mnist/attention_rollout.png

@@ -1,0 +1,37 @@
+Tiny Shakespeare: 1,115,394 bytes
+
+vocab size |    tokens | bytes per token | train time
+------------------------------------------------------
+       256 | 1,115,394 |            1.00 |   0.1s
+       512 |   575,345 |            1.94 |   7.8s
+      1024 |   459,760 |            2.43 |  21.7s
+
+The first 20 merges it learned (most frequent pairs first):
+      b' ' + b't'     -> b' t'
+      b'h' + b'e'     -> b'he'
+      b' ' + b'a'     -> b' a'
+      b'o' + b'u'     -> b'ou'
+      b' ' + b's'     -> b' s'
+      b' ' + b'm'     -> b' m'
+      b'i' + b'n'     -> b'in'
+      b' ' + b'w'     -> b' w'
+      b'r' + b'e'     -> b're'
+      b'h' + b'a'     -> b'ha'
+      b'n' + b'd'     -> b'nd'
+     b' t' + b'he'    -> b' the'
+      b' ' + b'b'     -> b' b'
+      b'i' + b's'     -> b'is'
+      b'o' + b'r'     -> b'or'
+      b' ' + b'f'     -> b' f'
+      b'e' + b'r'     -> b'er'
+      b'l' + b'l'     -> b'll'
+      b'i' + b't'     -> b'it'
+      b'o' + b'n'     -> b'on'
+
+The longest tokens in the 1024 vocabulary:
+  'GLOUCESTER', ' VINCENTIO', 'CORIOLANUS', 'PETRUCHIO', 'ORIOLANUS', ' daughter', ' brother', ' RICHARD', 'GLOUCEST', 'INCENTIO', 'MENENIUS', ' friends'
+
+How one line is split ('ROMEO: But, soft! what light through yonder window breaks?'):
+  vocab  256 (58 tokens): R|O|M|E|O|:| |B|u|t|,| |s|o|f|t|!| |w|h|a|t| |l|i|g|h|t| |t|h|r|o|u|g|h| |y|o|n|d|e|r| |w|i|n|d|o|w| |b|r|e|a|k|s|?
+  vocab  512 (33 tokens): R|O|M|E|O|:| |But|,| so|f|t|!| what| li|ght| th|r|ou|gh| y|o|nd|er| w|ind|ow| b|re|a|k|s|?
+  vocab 1024 (25 tokens): ROMEO|:| |But|,| so|f|t|!| what| li|ght| th|r|ough| y|ond|er| w|ind|ow| bre|ak|s|?

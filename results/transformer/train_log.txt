@@ -1,0 +1,12 @@
+model: 234,317 parameters on cpu
+step     1  loss 3.428  token acc   7.8%  lr 0.00002
+step   250  loss 1.139  token acc  73.7%  lr 0.00197
+step   500  loss 0.722  token acc  92.3%  lr 0.00140
+step   750  loss 0.618  token acc  97.5%  lr 0.00114
+step  1000  loss 0.611  token acc  97.3%  lr 0.00099
+step  1250  loss 0.560  token acc  99.4%  lr 0.00088
+step  1500  loss 0.580  token acc  98.4%  lr 0.00081
+step  1750  loss 0.569  token acc  98.8%  lr 0.00075
+step  2000  loss 0.553  token acc  99.8%  lr 0.00070
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/checkpoints/reverse.pt
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/step11_training/training_curves.png

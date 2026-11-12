@@ -1,0 +1,33 @@
+
+GPT-2 style (LayerNorm, learned positions, ReLU MLP): 818,048 parameters
+  step     0  val loss 4.224  (2s)
+  step   250  val loss 2.360  (79s)
+  step   500  val loss 2.068  (157s)
+  step   750  val loss 1.924  (235s)
+  step  1000  val loss 1.853  (313s)
+  step  1250  val loss 1.807  (390s)
+  step  1500  val loss 1.764  (466s)
+  step  1750  val loss 1.738  (543s)
+  step  2000  val loss 1.726  (618s)
+
+LLaMA style (RMSNorm, RoPE, SwiGLU): 800,000 parameters
+  step     0  val loss 4.224  (1s)
+  step   250  val loss 1.952  (67s)
+  step   500  val loss 1.771  (132s)
+  step   750  val loss 1.706  (197s)
+  step  1000  val loss 1.647  (264s)
+  step  1250  val loss 1.610  (333s)
+  step  1500  val loss 1.588  (401s)
+  step  1750  val loss 1.573  (468s)
+  step  2000  val loss 1.561  (535s)
+
+================ summary ================
+GPT-2 style (LayerNorm, learned positions, ReLU MLP)
+  final val loss 1.726   training time 619s
+  sample: 'ROMEO:\nThrefore these not made a means.\n\nLAdserecen:\nAre of thy hath were my strange showell!\n\nHENRY BOLINGBROKE:\nWhick, and cosend with a not my father we '
+
+LLaMA style (RMSNorm, RoPE, SwiGLU)
+  final val loss 1.561   training time 535s
+  sample: "ROMEO:\nThy mother's presence, canner, you do I to thee,\nIs yet given you receive the seemely!\nThese is stands, your way we are senate;\nHer none hath soon pu"
+
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/bonus/step17_llama_style/compare.png

@@ -1,0 +1,56 @@
+trained BPE tokenizer: 512 tokens in 8.0s
+1,115,394 characters -> 575,345 tokens (1.94 chars/token), vocab 512
+TinyGPT: 875,264 parameters on cpu
+step     0  train 6.232  val 6.231  (4s)
+step   250  train 3.631  val 3.743  (94s)
+step   500  train 3.269  val 3.494  (185s)
+step   750  train 3.030  val 3.328  (275s)
+step  1000  train 2.891  val 3.211  (365s)
+step  1250  train 2.805  val 3.125  (455s)
+step  1500  train 2.716  val 3.066  (545s)
+step  1750  train 2.638  val 3.027  (635s)
+step  2000  train 2.611  val 2.987  (725s)
+step  2250  train 2.592  val 2.964  (816s)
+step  2500  train 2.580  val 2.948  (907s)
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/checkpoints/tinygpt_bpe.pt
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/bonus/step13_gpt_decoder_only/loss_bpe.png
+
+----- sample (temperature 0.8, top-k 50) -----
+ROMEO:
+Thy father's night, to tell me.
+
+JULIET:
+If it, good doth I was much be bring off.
+
+DUKE VINCENTIO:
+I am not so: the royal friends are here;
+And I'll do more help my masters;
+But, call thy news, though I have prove
+Arepared a sin; I would not report my
+And liefe the getter.
+
+DUCHESS OF YORK:
+Give me to gatef, and his stop,
+When to your great letters about the fires,
+And being his part-sing hearts,
+But with the foreman awhile.
+
+DUKE VINCENTIO:
+Go good charguish.
+
+DUKE VINCENTIO:
+Say the deediver of men of Lord Henry.
+
+DUKE VINCENTIO:
+Heaven so, Tybalt!
+
+DUKE VINCENTIO:
+Prossess, I am not better too;
+We'll sleep her, but their being it
+If you, even, I'll be might.
+
+BRUTUS:
+Black, then, sir, take me how may you abumity.
+
+POM
+-----------------------------------------------

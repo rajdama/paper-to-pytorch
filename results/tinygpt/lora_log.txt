@@ -1,0 +1,33 @@
+LoRA rank 8 on every query and value projection: training 16,384 of 834,432 parameters (1.96%)
+
+step  100  loss on ALL-CAPS text 2.436
+step  200  loss on ALL-CAPS text 2.234
+step  300  loss on ALL-CAPS text 2.172
+step  400  loss on ALL-CAPS text 2.124
+
+validation loss on ALL-CAPS Shakespeare: 4.298 -> 2.068
+share of generated letters that are capitals: 9% -> 99%
+
+----- before LoRA -----
+ROMEO:
+The most kind self it one means by this toster.
+
+First Senator:
+The chath good be ever of the contents, your way,
+Farewelly are off not my father well stone.
+
+Seconder:
+And the contring.
+
+First Marca
+
+----- after LoRA (merged) -----
+ROMEO:
+THOS WOULY RETHTSER THHE MEeT AND ON SIN
+TO SEUM FERD BREOO AND TO MOTARY SOR HORTABTELT.
+
+SOPER:
+ME BUNGE WIT WATH ARSAY ON HE HUM SHOME SER LIANS AND
+ARD WHICK I MOTES HE PED SINS ECAY WERR OF.
+
+HE

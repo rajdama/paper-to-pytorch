@@ -1,0 +1,13 @@
+examples:
+  [3, 5, 2, 2, 8, 9, 4, 2, 8]  ->  [8, 2, 4, 9, 8, 2, 2, 5, 3]
+  [3, 4, 6, 6, 5, 6, 9, 9]  ->  [9, 9, 6, 5, 6, 6, 4, 3]
+  [5, 5, 8, 9, 9, 1, 1, 2, 8]  ->  [8, 2, 1, 1, 9, 9, 8, 5, 5]
+  [1, 1, 3, 3, 9]  ->  [9, 3, 3, 1, 1]
+  [2, 0, 3, 9, 5, 8, 5]  ->  [5, 8, 5, 9, 3, 0, 2]
+
+exact-match accuracy on 200 unseen sequences
+  greedy decoding:      99.0%
+  beam search (k = 4):  98.0%
+input  [3, 1, 4, 1, 5, 9, 2, 6]
+output [6, 2, 9, 5, 1, 4, 1, 3]
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/step12_inference/cross_attention.png

@@ -1,0 +1,35 @@
+1,115,394 characters -> 1,115,394 tokens (1.00 chars/token), vocab 65
+TinyGPT: 818,048 parameters on cpu
+step     0  train 4.218  val 4.218  (4s)
+step   250  train 2.350  val 2.353  (92s)
+step   500  train 2.063  val 2.107  (180s)
+step   750  train 1.835  val 1.949  (268s)
+step  1000  train 1.715  val 1.844  (355s)
+step  1250  train 1.641  val 1.806  (443s)
+step  1500  train 1.579  val 1.752  (531s)
+step  1750  train 1.554  val 1.721  (619s)
+step  2000  train 1.514  val 1.694  (707s)
+step  2250  train 1.512  val 1.670  (795s)
+step  2500  train 1.513  val 1.668  (883s)
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/checkpoints/tinygpt_char.pt
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/bonus/step13_gpt_decoder_only/loss_char.png
+
+----- sample (temperature 0.8, top-k 50) -----
+ROMEO:
+The most kind self it one means by this toster.
+
+First Senator:
+The chath good be ever of the contents, your way,
+Farewelly are off not my father well stone.
+
+Seconder:
+And the contring.
+
+First Marcal:
+To fair it me: thou snow say that of livel of with bink.
+
+JULIET:
+Their be stand of good them marry, what do heard do live
+In it such of see, in I brace he would we such for well
+Follow all the pin
+-----------------------------------------------

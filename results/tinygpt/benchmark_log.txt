@@ -1,0 +1,11 @@
+model: 5,001,216 parameters, prompt 16 tokens, greedy decoding
+
+new tokens |  no cache |  KV cache | speedup | tokens/s (cache)
+--------------------------------------------------------------
+        64 |     0.55s |     0.18s |    3.1x |      357
+       128 |     1.49s |     0.37s |    4.0x |      343
+       256 |     4.70s |     0.76s |    6.2x |      336
+       448 |    14.10s |     1.36s |   10.3x |      328
+
+identical outputs in every run ✓
+saved /home/runner/work/paper-to-pytorch/paper-to-pytorch/bonus/step15_kv_cache/benchmark.png
