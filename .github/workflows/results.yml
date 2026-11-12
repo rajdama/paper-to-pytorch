@@ -53,11 +53,34 @@ jobs:
           python -m bonus.step13_gpt_decoder_only.train_gpt --tokenizer bpe --vocab-size 512 --steps 2500 | tee out/train_bpe_log.txt
           python -m bonus.step13_gpt_decoder_only.generate --kv-cache --prompt "JULIET:" --tokens 200 | tee out/generate_log.txt
           python -m bonus.step15_kv_cache.benchmark | tee out/benchmark_log.txt
+          python -m bonus.step16_lora.finetune_caps | tee out/lora_log.txt
           cp bonus/step13_gpt_decoder_only/loss_char.png bonus/step13_gpt_decoder_only/loss_bpe.png \
              bonus/step15_kv_cache/benchmark.png out/
       - uses: actions/upload-artifact@v4
         with:
           name: tinygpt
+          path: out/
+
+  llama:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install matplotlib
+      - name: GPT-2 style vs LLaMA style (bonus 17)
+        run: |
+          mkdir -p out
+          python -m bonus.data
+          python -m bonus.step17_llama_style.compare | tee out/compare_log.txt
+          cp bonus/step17_llama_style/compare.png out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: llama
           path: out/
 
   vit:
@@ -83,7 +106,7 @@ jobs:
           path: out/
 
   commit:
-    needs: [transformer, tinygpt, vit]
+    needs: [transformer, tinygpt, llama, vit]
     runs-on: ubuntu-latest
     permissions:
       contents: write
