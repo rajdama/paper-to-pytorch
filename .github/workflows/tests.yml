@@ -3,28 +3,72 @@ name: tests
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 jobs:
   pytest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
-
       - name: Install dependencies (CPU-only PyTorch)
         run: |
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install matplotlib pytest
-
       - name: Run tests
         run: pytest -v
 
-      - name: Train the Transformer on the reverse task (Step 11)
+  transformer:
+    name: train Transformer (steps 01-12)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies (CPU-only PyTorch)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install matplotlib
+      - name: Train on the reverse task (Step 11)
         run: python -m step11_training.train_reverse
-
       - name: Decode with the trained model (Step 12)
         run: python -m step12_inference.demo
+      - uses: actions/upload-artifact@v4
+        with:
+          name: transformer-results
+          path: step11_training/training_curves.png
+
+  tinygpt:
+    name: train TinyGPT (bonus 13-15)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies (CPU-only PyTorch)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install matplotlib
+      - name: Download Tiny Shakespeare
+        run: python -m bonus.data
+      - name: BPE tokenizer on Tiny Shakespeare (Step 14)
+        run: python -m bonus.step14_bpe_tokenizer.demo
+      - name: Train TinyGPT on characters (Step 13)
+        run: python -m bonus.step13_gpt_decoder_only.train_gpt --steps 2000
+      - name: Generate with the KV cache (Steps 13 + 15)
+        run: python -m bonus.step13_gpt_decoder_only.generate --kv-cache --prompt "JULIET:" --tokens 120
+      - name: KV cache speed benchmark (Step 15)
+        run: python -m bonus.step15_kv_cache.benchmark
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tinygpt-results
+          path: |
+            bonus/step13_gpt_decoder_only/loss_char.png
+            bonus/step15_kv_cache/benchmark.png
